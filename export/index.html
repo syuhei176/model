@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>milkcocoa chat</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="model.js"></script>
+        <script>
+        $(function() {
+            var e = model.ModelElement.from({
+                nodes : {
+                }
+            });
+
+            e.on("set", function() {
+                console.log("set primitive event")
+            });
+
+            e.child("nodes").on("set", function() {
+                console.log("set primitive event")
+            });
+
+            e.child("nodes").child("node1").on("set", function() {
+                console.log("set primitive event")
+            });
+
+            e.child("nodes").set("node1", {
+                        id : "node1",
+                        x : 100,
+                        y : 100
+            });
+            console.log(e.child("nodes"));
+            console.log(e.child("nodes").child("node1"));
+            console.log(e.child("nodes").child("node1").child("id").val());
+            console.log(e.child("nodes").child("node1").child("x").val());
+            console.log(e.child("nodes").child("node1").child("y").val());
+            e.child("nodes").set("node2", {id : "node2"});
+            console.log(e.child("nodes").child("node2").child("id").val());
+            console.log(e.get("node1"));
+        })
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
