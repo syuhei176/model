@@ -16,16 +16,25 @@ enum ModelValue {
 class ModelElement {
 
 	private var modelValue:ModelValue;
-	private var onSet : Void->Void;
+	private var onSet : Dynamic->Dynamic->Void;
+	private var children_cache:Map<String, ModelElement>;
 
 	public function new(?modelValue : ModelValue) {
 		this.modelValue = modelValue;
+		this.children_cache = new Map<String, ModelElement>();
 	}
 
 	public function child(key:String):ModelElement {
 		return switch(modelValue) {
 			case MOBject(elems):
-				new ModelElement(elems.get(key));
+				if(children_cache.get(key) != null) {
+					children_cache.get(key).modelValue = modelValue;
+					children_cache.get(key);
+				}else{
+					var me = new ModelElement(elems.get(key));
+					children_cache.set(key, me);
+					me;
+				}
 			default:
 		}
 	}
@@ -82,18 +91,20 @@ class ModelElement {
 	}
 
 	public function set_object(key:String) {
-		return switch(modelValue) {
+		switch(this.modelValue) {
 			case MOBject(elems):
-				if(this.onSet != null) this.onSet();
+				if(this.onSet != null) {
+					this.onSet(null, {key:key});
+				}
 				elems.set(key, ModelValue.MOBject( new Map<String, model.ModelValue>() ));
 			default:
 		}
 	}
 
 	public function set_primitive(key:String, val:ModelValue) {
-		return switch(modelValue) {
+		switch(modelValue) {
 			case MOBject(elems):
-				if(this.onSet != null) this.onSet();
+				if(this.onSet != null) this.onSet(null, {key:key,val:val});
 				elems.set(key, val);
 			default:
 		}

@@ -15,16 +15,16 @@
                 }
             });
 
-            e.on("set", function() {
-                console.log("set primitive event")
+            e.on("set", function(e, obj) {
+                console.log("set", obj);
             });
 
-            e.child("nodes").on("set", function() {
-                console.log("set primitive event")
+            e.child("nodes").on("set", function(e, obj) {
+                console.log("nodes:set", obj);
             });
 
-            e.child("nodes").child("node1").on("set", function() {
-                console.log("set primitive event")
+            e.child("nodes").child("node1").on("set", function(e, obj) {
+                console.log("nodes.node1:set", obj);
             });
 
             e.child("nodes").set("node1", {

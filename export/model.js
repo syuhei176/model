@@ -117,6 +117,7 @@ model.ModelValue.MOBject = function(elems) { var $x = ["MOBject",4,elems]; $x.__
 model.ModelValue.MArray = function(v) { var $x = ["MArray",5,v]; $x.__enum__ = model.ModelValue; return $x; };
 model.ModelElement = $hx_exports.model.ModelElement = function(modelValue) {
 	this.modelValue = modelValue;
+	this.children_cache = new haxe.ds.StringMap();
 };
 model.ModelElement.__name__ = true;
 model.ModelElement.from_part = function(json) {
@@ -150,7 +151,15 @@ model.ModelElement.prototype = {
 			switch(_g[1]) {
 			case 4:
 				var elems = _g[2];
-				return new model.ModelElement(elems.get(key));
+				if(this.children_cache.get(key) != null) {
+					this.children_cache.get(key).modelValue = this.modelValue;
+					return this.children_cache.get(key);
+				} else {
+					var me = new model.ModelElement(elems.get(key));
+					this.children_cache.set(key,me);
+					return me;
+				}
+				break;
 			default:
 			}
 		}
@@ -214,9 +223,10 @@ model.ModelElement.prototype = {
 			switch(_g[1]) {
 			case 4:
 				var elems = _g[2];
-				if(this.onSet != null) this.onSet();
+				if(this.onSet != null) this.onSet(null,{ key : key});
 				var value = model.ModelValue.MOBject(new haxe.ds.StringMap());
-				return elems.set(key,value);
+				elems.set(key,value);
+				break;
 			default:
 			}
 		}
@@ -227,8 +237,9 @@ model.ModelElement.prototype = {
 			switch(_g[1]) {
 			case 4:
 				var elems = _g[2];
-				if(this.onSet != null) this.onSet();
-				return elems.set(key,val);
+				if(this.onSet != null) this.onSet(null,{ key : key, val : val});
+				elems.set(key,val);
+				break;
 			default:
 			}
 		}
